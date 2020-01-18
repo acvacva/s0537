@@ -1,0 +1,23 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    
+NO HAY QUE COMPRAR LOS SIGUIENTES PRODUCTOS
+
+<table>
+<th:block th:each="fher : ${nocomprar}">
+<!-- <tr th:each="fher : ${nocomprar}"> -->
+<tr>
+<td th:text="${fher.id_producto}"></td>
+<td th:text="${fher.nombre_producto}"></td>
+<td th:text="${fher.descripcion}"></td>
+<td th:text="${fher.comprar}"></td>
+</tr>
+</th:block>
+</table>
+
+</body>
+</html>

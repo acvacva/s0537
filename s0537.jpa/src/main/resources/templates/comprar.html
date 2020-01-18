@@ -1,0 +1,25 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+   
+HAY QUE COMPRAR LOS SIGUIENTES PRODUCTOS
+
+<table>
+<th:block th:each="fer : ${compra}">
+<!-- <tr th:each="fer : ${compra}"> -->
+<tr>
+<td th:text="${fer.id_producto}"></td>
+<td th:text="${fer.nombre_producto}"></td>
+<td th:text="${fer.descripcion}"></td>
+<td th:text="${fer.comprar}"></td>
+</tr>
+</th:block>
+</table>
+
+
+
+</body>
+</html>
