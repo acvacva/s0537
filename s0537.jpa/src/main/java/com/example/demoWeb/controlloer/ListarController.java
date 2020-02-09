@@ -1,14 +1,21 @@
 package com.example.demoWeb.controlloer;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.example.demoWeb.model.Producto;
+import com.example.demoWeb.model.Tipoproducto;
 import com.example.demoWeb.repo.IListacomprarepo;
+import com.example.demoWeb.repo.ITipoproductorepo;
 
 
 @Controller
@@ -16,7 +23,8 @@ public class ListarController {
 
 	@Autowired
 	private IListacomprarepo repo;
-
+	@Autowired
+	private ITipoproductorepo repo1;
 
 	@GetMapping("/listar")
 	public String greeting(Model model) {
@@ -39,9 +47,33 @@ public class ListarController {
  for (Object i: repo.findAll()) {
   System.out.println (i); //Muestra cada uno de los nombres dentro de listaDeNombres
 
-
 }
+ try {
+ Connection miConexion=DriverManager.getConnection("jdbc:mysql://localhost:3306/s0537jpa?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "root1");
+ PreparedStatement miSentencia=miConexion.prepareStatement("select id_producto,nombre_producto,descripcion,tipoproducto from producto" + " where tipoproducto=?");
+	// 3 establecer parametros de la consulta
+	miSentencia.setString(1, "LACTEO");
+
+	// 4 ejecutar y recorrer consulta
+	ResultSet rs=miSentencia.executeQuery();
+	// 5 recorrer la tabla virtual del resultset
+	while (rs.next()) {
+		System.out.println(rs.getString(1)+" -- "+rs.getString(2)+" --  "+rs.getString(3));
+	}
+	 PreparedStatement miSentencia2=miConexion.prepareStatement("SELECT * FROM producto INNER JOIN tipoproducto ON producto.tipoproducto_id = tipoproducto.id_tipoproducto WHERE producto.comprar=1;");
+	 ResultSet rs1=miSentencia2.executeQuery();
+	 System.out.println("Prepared statement con inner join que hay que comprar");
+		while (rs1.next()) {
+			//System.out.println(rs1);
+			System.out.println(rs1.getString(1)+"--"+rs1.getString(2)+"--"+rs1.getString(3)+"--"+rs1.getString(4)+"--"+rs1.getString(5));
+		}
+ }
+		catch ( SQLException e) {
+	        e.printStackTrace();
+	        System.exit(128);
+ }
 return "listar";
+
 }
 	
 	@GetMapping("/comprar")
@@ -71,13 +103,38 @@ return "nocomprar";
 return "listar";
 }
 	
-@GetMapping("/lacteo")
+@GetMapping("/tipoproducto")
 	public String buscar(Model model) {
-     model.addAttribute("personas", repo.findByTipoproducto("LACTEO"));
+    model.addAttribute("personas", repo1.findAll());
+ return "tipoproducto";
 
-return "listar";
 }
 
+@GetMapping("/todos")
+public String buscartodos(Model model) {
+model.addAttribute("personas", repo1.findAll());
+System.out.println("Hola todos los registros relacionados");
+for (Object i: repo1.findAll()) {
+	  System.out.println (i); //Muestra cada uno de los nombres dentro de listaDeNombres
+	}
+
+System.out.println("Select by tipoproducto LACTEO");
+for (Tipoproducto tiprod : repo1.findByTipoproducto("LACTEO")) {
+	System.out.println(tiprod);
+}
+
+System.out.println("Select by tipoproducto CARNES");
+for (Tipoproducto tiprod : repo1.findByTipoproducto("CARNES")) {
+	System.out.println(tiprod);
+}
+
+System.out.println("Select by tipoproducto CEREALES-LEGUMBRES");
+for (Tipoproducto tiprod : repo1.findByTipoproducto("CEREALES-LEGUMBRES")) {
+	System.out.println(tiprod);
+}
+return "tipoproducto";
+
+}
  //    http://localhost:9899/greeting?name=Leche
 	@GetMapping("/greeting")
 	public String greeting(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
